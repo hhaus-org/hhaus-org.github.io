@@ -1,0 +1,21 @@
+---
+import PreInterestForm from '../../components/PreInterestForm.astro';
+import PublicIntakeScripts from '../../components/PublicIntakeScripts.astro';
+import SiteLayout from '../../layouts/SiteLayout.astro';
+---
+
+<SiteLayout
+  title="Submit pre-interest — H/HAUS"
+  description="Tell H/HAUS Medellín about the venture you want to build and whether a three- or six-month founder residency fits your plan."
+>
+  <section class="page-hero page-hero--acid intake-hero">
+    <p class="kicker">Pre-interest · about five minutes</p>
+    <h1>Start with<br /><em>the venture.</em></h1>
+    <p class="page-lede">Share your LinkedIn profile, your entrepreneurship proposal, and whether a three- or six-month Medellín residency fits your plan.</p>
+    <p class="intake-account-note">Already have an H/HAUS session? <a href="https://user.hhaus.org/submit-pre-interest">Use the prefilled signed-in form</a>.</p>
+  </section>
+  <section class="intake-page" aria-label="Pre-interest form">
+    <PreInterestForm />
+  </section>
+  <PublicIntakeScripts />
+</SiteLayout>

@@ -1,0 +1,21 @@
+---
+import ApplicationForm from '../../components/ApplicationForm.astro';
+import PublicIntakeScripts from '../../components/PublicIntakeScripts.astro';
+import SiteLayout from '../../layouts/SiteLayout.astro';
+---
+
+<SiteLayout
+  title="Submit application — H/HAUS"
+  description="Apply to live and build at H/HAUS Medellín. Private resume and photo-ID evidence are verified before acceptance."
+>
+  <section class="page-hero page-hero--violet intake-hero">
+    <p class="kicker">Application · H/HAUS Medellín</p>
+    <h1>Apply to live<br /><em>and build with us.</em></h1>
+    <p class="page-lede">Complete the residency application and provide private evidence for age and identity verification.</p>
+    <p class="intake-account-note intake-account-note--dark">Already have an H/HAUS session? <a href="https://user.hhaus.org/submit-application">Use the prefilled signed-in form</a>.</p>
+  </section>
+  <section class="intake-page" aria-label="Residency application form">
+    <ApplicationForm />
+  </section>
+  <PublicIntakeScripts />
+</SiteLayout>

@@ -14,7 +14,7 @@ The root site introduces the shared model and publishes a canonical page for eac
 - CDMX — `/locations/cdmx/`
 - Montréal — `/locations/montreal/`
 
-Cloudflare city hosts redirect to these pages through the exact allowlist in [`config/city-routes.json`](config/city-routes.json). Reserved application hosts such as `auth`, `org`, `user`, and `api` are deliberately outside that routing contract.
+Cloudflare city hosts redirect to these pages through the exact allowlist in [`config/city-routes.json`](config/city-routes.json). Reserved application hosts such as `auth`, `org`, `user`, `api`, `admin`, and `admin-api` are deliberately outside that routing contract.
 
 ## Development
 
@@ -27,6 +27,12 @@ npm run verify
 ```
 
 The site is built with Astro only. It does not use Jekyll, Hugo, React, or JSX. GitHub Actions builds the static artifact and deploys it to GitHub Pages.
+
+Anonymous Medellín intake is published at `/submit-pre-interest/` (also
+`/pre-register/`) and `/submit-application/`. Text submission goes through the
+HHaus API's dual-write contract; private application files use API-issued,
+single-use signed uploads to the private Supabase bucket. Authenticated users
+continue to the corresponding `user.hhaus.org` forms.
 
 ## Delivery surfaces
 

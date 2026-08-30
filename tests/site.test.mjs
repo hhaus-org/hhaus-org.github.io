@@ -22,7 +22,17 @@ const cities = [
   ['montreal', 'Montréal'],
 ];
 
-const routes = ['/', '/locations/', '/about/', '/apply/', '/404/', ...cities.map(([slug]) => `/locations/${slug}/`)];
+const routes = [
+  '/',
+  '/locations/',
+  '/about/',
+  '/apply/',
+  '/pre-register/',
+  '/submit-pre-interest/',
+  '/submit-application/',
+  '/404/',
+  ...cities.map(([slug]) => `/locations/${slug}/`),
+];
 
 test('Astro emits every public route with the shared site shell', () => {
   for (const route of routes) {
@@ -69,6 +79,7 @@ test('city redirect contract is exact and excludes reserved application hosts', 
   assert.deepEqual(contract.cities.map(({ hostname }) => hostname), cities.map(([slug]) => `${slug}.hhaus.org`));
   const cityHosts = new Set(contract.cities.map(({ hostname }) => hostname));
   for (const hostname of contract.reserved_application_hosts) assert.equal(cityHosts.has(hostname), false);
+  assert.ok(contract.reserved_application_hosts.includes('admin-api.hhaus.org'));
 });
 
 test('social image, robots, sitemap, and non-Jekyll marker ship in the artifact', () => {
@@ -81,5 +92,40 @@ test('social image, robots, sitemap, and non-Jekyll marker ship in the artifact'
   assert.ok(existsSync(join(root, 'dist/sitemap-index.xml')));
   for (const forbidden of ['_config.yml', 'Gemfile', 'hugo.toml', 'hugo.yaml']) {
     assert.equal(existsSync(join(root, forbidden)), false, `${forbidden} must not exist`);
+  }
+});
+
+test('public intake captures the contract and hands signed-in users to their server forms', () => {
+  const preInterest = readRoute('/submit-pre-interest/');
+  const preRegister = readRoute('/pre-register/');
+  const application = readRoute('/submit-application/');
+  for (const html of [preInterest, preRegister]) {
+    for (const field of ['email', 'linkedin_url', 'entrepreneurship_idea', 'stay_preference', 'privacy_accepted']) {
+      assert.match(html, new RegExp(`name="${field}"`));
+    }
+    assert.match(html, /https:\/\/user\.hhaus\.org\/submit-pre-interest/);
+  }
+  for (const field of ['linkedin_url', 'date_of_birth', 'resume', 'photo_id', 'age_and_identity_attestation']) {
+    assert.match(application, new RegExp(`name="${field}"`));
+  }
+  assert.match(application, /https:\/\/user\.hhaus\.org\/submit-application/);
+  assert.match(application, /Used only for age and identity verification/);
+});
+
+test('public intake client preserves the fail-closed dual-storage and upload boundary', () => {
+  const client = read('public/intake.js');
+  const scripts = read('src/components/PublicIntakeScripts.astro');
+  assert.match(scripts, /api\.js\?render=explicit/);
+  assert.match(client, /execution: 'execute'/);
+  assert.match(client, /turnstile\.reset\(widgetId\)/);
+  assert.match(client, /turnstile\.execute\(widgetId\)/);
+  assert.match(client, /\/v1\/pre-interests/);
+  assert.match(client, /\/v1\/applications/);
+  assert.match(client, /\/v1\/intake\/uploads/);
+  assert.match(client, /completed\.status !== 'verified'/);
+  assert.match(client, /credentials: 'omit'/);
+  assert.doesNotMatch(client, /localStorage|sessionStorage|document\.cookie/);
+  for (const marker of ['SERVICE_ROLE', 'SECRET_KEY', 'AUTH_SERVICE_CREDENTIAL']) {
+    assert.equal(client.includes(marker), false);
   }
 });

@@ -13,4 +13,4 @@ Use Astro, not Jekyll, Hugo, React, or JSX. Add tests with behavior changes. Kee
 
 Never commit credentials or private resident data. Keep Cloudflare and GitHub credentials in approved helpers only. Resolve conflicts semantically using relevant history. Never rebase, stash, reset, force-push, or use a worktree without explicit human permission. Stage explicit paths, commit verified work, merge remote changes, push, and open a PR.
 
-Do not broaden the city routing wildcard. `auth`, `org`, `user`, `api`, `admin`, and `api-admin` are reserved application hosts and must fail closed outside the seven-city redirect contract.
+Do not broaden the city routing wildcard. `auth`, `org`, `user`, `api`, `admin`, `admin-api`, and the legacy-reserved `api-admin` are application hosts and must fail closed outside the seven-city redirect contract.
