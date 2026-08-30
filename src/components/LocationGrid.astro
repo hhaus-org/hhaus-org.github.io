@@ -1,0 +1,15 @@
+---
+import { locations, locationStatusLabel } from '../data/locations';
+---
+
+<div class="location-grid">
+  {locations.map((location, index) => (
+    <a class={`location-card theme-${location.theme}`} href={`/locations/${location.slug}/`}>
+      <span class="location-number">{String(index + 1).padStart(2, '0')}</span>
+      <span class="location-status"><i></i>{locationStatusLabel(location.status)}</span>
+      <span class="location-city">{location.city}</span>
+      <span class="location-meta">{location.country} <b>{location.code}</b></span>
+      <span class="location-arrow" aria-hidden="true">↗</span>
+    </a>
+  ))}
+</div>
