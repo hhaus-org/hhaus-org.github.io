@@ -1,0 +1,23 @@
+---
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import LocationGrid from '../../components/LocationGrid.astro';
+---
+
+<SiteLayout
+  title="Locations — H/HAUS"
+  description="Explore the seven cities in the H/HAUS hacker-house network."
+>
+  <section class="page-hero">
+    <p class="kicker">The network</p>
+    <h1>Pick a city.<br /><em>Meet your people.</em></h1>
+    <p class="page-lede">Every H/HAUS chapter has its own local texture and shares the same simple premise: focused people do better work around other focused people.</p>
+  </section>
+  <section class="page-section" aria-labelledby="all-locations">
+    <div class="section-heading section-heading--compact">
+      <p class="kicker">01—07</p>
+      <h2 id="all-locations">The chapters</h2>
+      <p>Medellín is the founding chapter. The wider network is forming city by city; details will be published only when they are real.</p>
+    </div>
+    <LocationGrid />
+  </section>
+</SiteLayout>

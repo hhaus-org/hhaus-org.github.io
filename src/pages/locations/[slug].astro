@@ -1,0 +1,37 @@
+---
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import { locations, locationStatusLabel, type Location } from '../../data/locations';
+
+export function getStaticPaths() {
+  return locations.map((location) => ({ params: { slug: location.slug }, props: { location } }));
+}
+
+interface Props { location: Location }
+const { location } = Astro.props;
+const title = `${location.city} — H/HAUS`;
+---
+
+<SiteLayout title={title} description={location.description}>
+  <article class={`city-page theme-${location.theme}`}>
+    <div class="city-hero">
+      <div class="city-topline">
+        <span>{location.code}</span>
+        <span>{location.country}</span>
+        <span>{locationStatusLabel(location.status)}</span>
+      </div>
+      <h1>{location.city}</h1>
+      <p>{location.description}</p>
+      <a class="button button--dark" href={`/apply/?city=${location.slug}`}>Register interest <span aria-hidden="true">↗</span></a>
+    </div>
+    <div class="city-details">
+      <p class="kicker">Local address</p>
+      <a href={`https://${location.domain}`}>{location.domain} <span aria-hidden="true">↗</span></a>
+      <p>Each city hostname is reserved for its chapter. Until local operations are announced, this page is the canonical source of current information.</p>
+    </div>
+    <div class="city-principles">
+      <div><span>01</span><h2>A room to focus</h2><p>Enough structure to protect deep work; enough space to make the schedule your own.</p></div>
+      <div><span>02</span><h2>A table to share</h2><p>Meals, ideas, introductions, and practical knowledge move faster when people live nearby.</p></div>
+      <div><span>03</span><h2>A city to know</h2><p>The house is a door into the local scene, not a bubble sealed away from it.</p></div>
+    </div>
+  </article>
+</SiteLayout>

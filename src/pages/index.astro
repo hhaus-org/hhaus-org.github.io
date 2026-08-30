@@ -1,0 +1,31 @@
+---
+import SiteLayout from '../layouts/SiteLayout.astro';
+import LocationGrid from '../components/LocationGrid.astro';
+---
+
+<SiteLayout>
+  <section class="hero">
+    <div class="eyebrow"><span class="pulse"></span> One network · Seven cities</div>
+    <h1>Live where<br />you <em>build.</em></h1>
+    <div class="hero-bottom">
+      <p>
+        H/HAUS brings ambitious builders, artists, researchers, and founders under one roof —
+        with room to focus and people worth meeting.
+      </p>
+      <a class="button" href="/locations/">Find your house <span aria-hidden="true">↗</span></a>
+    </div>
+    <div class="hero-note" aria-label="H Haus principles">
+      <span>Live together</span><span>Build independently</span><span>Share what works</span>
+    </div>
+  </section>
+
+  <section class="locations-preview" aria-labelledby="locations-title">
+    <div class="section-heading">
+      <p class="kicker">The network</p>
+      <h2 id="locations-title">Seven local scenes.<br />One global table.</h2>
+      <p>Drop into a city for a focused chapter, or move through the network as your work takes you.</p>
+    </div>
+
+    <LocationGrid />
+  </section>
+</SiteLayout>

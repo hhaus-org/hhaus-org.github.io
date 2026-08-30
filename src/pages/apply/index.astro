@@ -1,0 +1,35 @@
+---
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import { locations, locationStatusLabel } from '../../data/locations';
+---
+
+<SiteLayout title="Join a house — H/HAUS" description="Register interest in an H/HAUS city or help form a new chapter.">
+  <section class="page-hero page-hero--acid">
+    <p class="kicker">Join the network</p>
+    <h1>Your next chapter<br /><em>starts here.</em></h1>
+    <p class="page-lede">The network is early by design. Choose a city to follow its progress, or help shape a future house as a local host.</p>
+  </section>
+  <section class="join-grid">
+    <div class="join-panel">
+      <p class="kicker">For residents</p>
+      <h2>Find your city.</h2>
+      <p>Applications and availability will open chapter by chapter. The member portal will be the source for verified dates, terms, and space.</p>
+      <a class="button" href="https://user.hhaus.org">Member portal <span aria-hidden="true">↗</span></a>
+    </div>
+    <div class="join-panel join-panel--dark">
+      <p class="kicker">For hosts</p>
+      <h2>Start a house.</h2>
+      <p>Know your city, care about the details, and want to create a durable home for independent builders? The host portal is for you.</p>
+      <a class="button" href="https://org.hhaus.org">Host portal <span aria-hidden="true">↗</span></a>
+    </div>
+  </section>
+  <section class="chapter-directory" aria-labelledby="directory-title">
+    <p class="kicker">City directory</p>
+    <h2 id="directory-title">Follow a chapter</h2>
+    <div>
+      {locations.map((location) => (
+        <a href={`/locations/${location.slug}/`}><span>{location.city}</span><small>{locationStatusLabel(location.status)}</small><b aria-hidden="true">↗</b></a>
+      ))}
+    </div>
+  </section>
+</SiteLayout>

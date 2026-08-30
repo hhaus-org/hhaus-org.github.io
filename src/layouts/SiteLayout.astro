@@ -1,0 +1,66 @@
+---
+import '../styles/global.css';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const {
+  title = 'H/HAUS — Live where you build',
+  description = 'A global network of hacker houses for ambitious builders, artists, researchers, and founders.',
+} = Astro.props;
+const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+const socialImageURL = new URL('/og.png', Astro.site);
+const sourceSha = import.meta.env.PUBLIC_SOURCE_SHA ?? 'local-development';
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="generator" content={Astro.generator} />
+    <meta name="description" content={description} />
+    <meta name="hhaus-source-sha" content={sourceSha} />
+    <link rel="canonical" href={canonicalURL} />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonicalURL} />
+    <meta property="og:image" content={socialImageURL} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={socialImageURL} />
+    <title>{title}</title>
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">Skip to content</a>
+    <header class="site-header">
+      <a class="wordmark" href="/" aria-label="H/HAUS home">
+        <span>H</span><span class="slash">/</span><span>HAUS</span>
+      </a>
+      <nav aria-label="Primary navigation">
+        <a href="/locations/">Locations</a>
+        <a href="/about/">How it works</a>
+        <a class="nav-cta" href="/apply/">Join a house <span aria-hidden="true">↗</span></a>
+      </nav>
+    </header>
+    <main id="main-content">
+      <slot />
+    </main>
+    <footer class="site-footer">
+      <a class="wordmark wordmark--small" href="/">H<span class="slash">/</span>HAUS</a>
+      <p>Different cities. Shared table. Serious work.</p>
+      <div class="footer-links">
+        <a href="https://user.hhaus.org">Member sign in</a>
+        <a href="https://org.hhaus.org">Host portal</a>
+        <a href="https://github.com/hhaus-org">GitHub</a>
+      </div>
+      <p class="fine-print">© {new Date().getFullYear()} H/HAUS · Built in the open.</p>
+    </footer>
+  </body>
+</html>
