@@ -38,6 +38,13 @@ jobs:
         run: npm run build
         env:
           PUBLIC_SOURCE_SHA: ${{ github.sha }}
+          PUBLIC_HHAUS_API_ORIGIN: https://api.hhaus.org
+          PUBLIC_HHAUS_SUPABASE_ORIGIN: https://bihpugkzayenywfyajnr.supabase.co
+          PUBLIC_HHAUS_TURNSTILE_SITE_KEY: ${{ vars.HHAUS_TURNSTILE_SITE_KEY }}
+      - name: Require production anti-automation configuration
+        env:
+          HHAUS_TURNSTILE_SITE_KEY: ${{ vars.HHAUS_TURNSTILE_SITE_KEY }}
+        run: test -n "$HHAUS_TURNSTILE_SITE_KEY"
       - name: Configure Pages
         uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d # v6.0.0
       - name: Upload Pages artifact

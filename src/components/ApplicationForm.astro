@@ -1,0 +1,129 @@
+---
+const apiOrigin = import.meta.env.PUBLIC_HHAUS_API_ORIGIN ?? 'https://api.hhaus.org';
+const supabaseOrigin = import.meta.env.PUBLIC_HHAUS_SUPABASE_ORIGIN ?? 'https://bihpugkzayenywfyajnr.supabase.co';
+const turnstileSiteKey = import.meta.env.PUBLIC_HHAUS_TURNSTILE_SITE_KEY ?? '';
+---
+
+<form
+  id="intake-form"
+  class="intake-form"
+  data-intake-form="application"
+  data-api-origin={apiOrigin}
+  data-supabase-origin={supabaseOrigin}
+  data-turnstile-site-key={turnstileSiteKey}
+  novalidate
+>
+  <input type="hidden" name="submission_nonce" />
+
+  <div class="intake-two-column">
+    <label class="intake-field"><span class="intake-label">Email</span><span class="intake-help">Application updates go here.</span><input type="email" name="email" autocomplete="email" maxlength="320" required /></label>
+    <label class="intake-field"><span class="intake-label">Legal name</span><span class="intake-help">Match the name on your ID.</span><input type="text" name="legal_name" autocomplete="name" maxlength="200" required /></label>
+    <label class="intake-field"><span class="intake-label">LinkedIn profile</span><span class="intake-help">Your personal /in/ URL.</span><input type="url" name="linkedin_url" placeholder="https://www.linkedin.com/in/your-name" required /></label>
+    <label class="intake-field"><span class="intake-label">Date of birth</span><span class="intake-help">Applicants must be 18 or older.</span><input type="date" name="date_of_birth" autocomplete="bday" min="1900-01-01" required /></label>
+    <label class="intake-field"><span class="intake-label">Nationality</span><span class="intake-help">Used for program and logistics planning.</span><input type="text" name="nationality" autocomplete="country-name" maxlength="120" required /></label>
+    <label class="intake-field"><span class="intake-label">Phone</span><span class="intake-help">Include country code.</span><input type="tel" name="phone" autocomplete="tel" maxlength="32" required /></label>
+    <label class="intake-field"><span class="intake-label">Current city</span><span class="intake-help">City and country.</span><input type="text" name="current_city" autocomplete="address-level2" maxlength="160" required /></label>
+    <label class="intake-field"><span class="intake-label">Preferred start month</span><span class="intake-help">Choose the month you could arrive.</span><input type="month" name="preferred_start_month" required /></label>
+    <label class="intake-field"><span class="intake-label">GitHub URL</span><span class="intake-help">Optional.</span><input type="url" name="github_url" placeholder="https://github.com/you" /></label>
+    <label class="intake-field"><span class="intake-label">Portfolio URL</span><span class="intake-help">Optional.</span><input type="url" name="portfolio_url" placeholder="https://your-site.example" /></label>
+  </div>
+
+  <label class="intake-field">
+    <span class="intake-label">Entrepreneurship idea</span>
+    <span class="intake-help">Explain the problem, customer, your approach, and what progress at HHaus would look like. 80–8,000 characters.</span>
+    <textarea name="entrepreneurship_idea" minlength="80" maxlength="8000" rows="10" required></textarea>
+  </label>
+
+  <div class="intake-two-column">
+    <label class="intake-field">
+      <span class="intake-label">Project stage</span><span class="intake-help">Choose the closest fit.</span>
+      <select name="project_stage" required>
+        <option value="idea">Idea</option>
+        <option value="prototype">Prototype</option>
+        <option value="early_revenue">Early revenue</option>
+        <option value="growing">Growing</option>
+        <option value="nonprofit_or_open_source">Nonprofit or open source</option>
+      </select>
+    </label>
+    <label class="intake-field">
+      <span class="intake-label">Preferred stay</span><span class="intake-help">Three or six months.</span>
+      <select name="stay_preference" required>
+        <option value="three_months">3 months</option>
+        <option value="six_months">6 months</option>
+      </select>
+    </label>
+  </div>
+
+  <label class="intake-field"><span class="intake-label">Community contribution</span><span class="intake-help">How will you contribute to the house, other founders, and Medellín? 40–4,000 characters.</span><textarea name="community_contribution" minlength="40" maxlength="4000" rows="7" required></textarea></label>
+  <label class="intake-field"><span class="intake-label">Accessibility or accommodation notes</span><span class="intake-help">Optional. Share only what you want our review team to consider.</span><textarea name="accessibility_or_accommodation_notes" maxlength="4000" rows="4"></textarea></label>
+
+  <section class="intake-placement" aria-labelledby="room-placement-heading">
+    <h2 id="room-placement-heading">Room placement and living preferences</h2>
+    <p>These answers are used only for accommodation and room placement—not admission scoring. You may choose “Prefer not to say” for sensory questions.</p>
+    <label class="intake-field"><span class="intake-label">Potential allergies</span><span class="intake-help">Optional. Share food, material, pet, or environmental allergies that may affect a shared living space.</span><textarea name="allergy_notes" maxlength="2000" rows="4"></textarea></label>
+    <div class="intake-two-column">
+      <label class="intake-field">
+        <span class="intake-label">Noise sensitivity</span><span class="intake-help">Choose the closest fit.</span>
+        <select name="noise_sensitivity" required>
+          <option value="none">None</option>
+          <option value="low">Low</option>
+          <option value="moderate">Moderate</option>
+          <option value="high">High</option>
+          <option value="prefer_not_to_say">Prefer not to say</option>
+        </select>
+      </label>
+      <label class="intake-field">
+        <span class="intake-label">Light sensitivity</span><span class="intake-help">Choose the closest fit.</span>
+        <select name="light_sensitivity" required>
+          <option value="none">None</option>
+          <option value="low">Low</option>
+          <option value="moderate">Moderate</option>
+          <option value="high">High</option>
+          <option value="prefer_not_to_say">Prefer not to say</option>
+        </select>
+      </label>
+      <label class="intake-field">
+        <span class="intake-label">Room-sharing preference</span><span class="intake-help">Some HHaus rooms have two or three beds.</span>
+        <select name="roommate_preference" required>
+          <option value="private_room">Private room</option>
+          <option value="open_to_roommates">Open to roommates</option>
+          <option value="prefer_roommates">Prefer roommates</option>
+          <option value="flexible">Flexible / no strong preference</option>
+        </select>
+      </label>
+      <label class="intake-field">
+        <span class="intake-label">Preferred room occupancy</span><span class="intake-help">Total residents in the room, including you.</span>
+        <select name="preferred_room_occupancy" required>
+          <option value="1">1 person / private room</option>
+          <option value="2">2 people / one roommate</option>
+          <option value="3">3 people / two roommates</option>
+        </select>
+      </label>
+    </div>
+    <label class="intake-field"><span class="intake-label">Other room preferences</span><span class="intake-help">Optional. Tell us about room location, natural light, stairs, layout, schedule, or other placement considerations.</span><textarea name="room_preference_notes" maxlength="2000" rows="4"></textarea></label>
+    <label class="intake-consent"><input type="checkbox" name="roommate_for_lower_cost" /><span>I am interested in roommates for a lower-cost stay.</span></label>
+    <label class="intake-consent"><input type="checkbox" name="roommate_for_social_connection" /><span>I am interested in roommates for more social connection.</span></label>
+    <label class="intake-consent"><input type="checkbox" name="accommodation_data_consent" required /><span>I consent to HHaus using these allergy, sensory, accommodation, and room-preference answers only for accommodation and placement planning.</span></label>
+  </section>
+
+  <section class="intake-private-documents" aria-labelledby="private-documents-heading">
+    <h2 id="private-documents-heading">Private documents</h2>
+    <div class="intake-two-column">
+      <label class="intake-field"><span class="intake-label">Resume</span><span class="intake-help">PDF or DOCX, up to 10 MB.</span><input type="file" name="resume" accept="application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document" required /></label>
+      <label class="intake-field"><span class="intake-label">Photo ID</span><span class="intake-help">PDF, JPEG, PNG, or HEIC, up to 10 MB. Used only for age and identity verification.</span><input type="file" name="photo_id" accept="application/pdf,image/jpeg,image/png,image/heic" required /></label>
+    </div>
+  </section>
+
+  <label class="intake-consent"><input type="checkbox" name="age_and_identity_attestation" required /><span>I attest that I am at least 18 and the identity document belongs to me.</span></label>
+  <label class="intake-consent"><input type="checkbox" name="privacy_accepted" required /><span>I consent to the HHaus intake privacy notice (version 2026-08-31), private document review, and dual database storage.</span></label>
+
+  <div class="turnstile-shell">
+    <div id="turnstile-widget" aria-label="Anti-automation verification"></div>
+    <p>Anonymous applications obtain a fresh single-use Turnstile proof for each protected API step. Proofs are never stored.</p>
+  </div>
+
+  <button class="intake-submit" type="submit">Submit application securely</button>
+  <p class="intake-fine-print">Hashing, uploading, and independently verifying two private documents can take a moment. Keep this page open until you see a receipt.</p>
+  <div id="intake-status" class="intake-status" role="status" aria-live="polite"></div>
+  <noscript><p class="intake-noscript">JavaScript is required for private public uploads. You can instead <a href="https://user.hhaus.org/submit-application">sign in and use the server form</a>.</p></noscript>
+</form>

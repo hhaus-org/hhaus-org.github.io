@@ -265,6 +265,8 @@ h1 em { color: var(--violet); font-family: Georgia, serif; font-weight: 400; }
 .join-panel h2 { margin: 5rem 0 1.5rem; font-size: clamp(2.8rem, 5vw, 5.5rem); letter-spacing: -0.075em; line-height: 0.92; }
 .join-panel > p:not(.kicker) { max-width: 33rem; margin-bottom: 2rem; line-height: 1.55; }
 .join-panel--dark .button { color: var(--ink); border-color: white; }
+.join-actions { display: flex; flex-wrap: wrap; gap: 0.8rem; }
+.button--outline { background: transparent; }
 .chapter-directory { padding: clamp(5rem, 9vw, 8rem) clamp(1rem, 3vw, 3rem); }
 .chapter-directory > h2 { margin: 2rem 0 4rem; font-size: clamp(3rem, 7vw, 7rem); letter-spacing: -0.08em; }
 .chapter-directory > div { border-top: 1px solid var(--ink); }
@@ -272,6 +274,66 @@ h1 em { color: var(--violet); font-family: Georgia, serif; font-weight: 400; }
 .chapter-directory a span { font-size: clamp(1.5rem, 3vw, 2.7rem); font-weight: 850; letter-spacing: -0.055em; }
 .chapter-directory a small { font-weight: 700; text-transform: uppercase; }
 .chapter-directory a:hover span, .chapter-directory a:focus-visible span { color: var(--violet); }
+
+.intake-hero { min-height: auto; }
+.intake-account-note {
+  max-width: 44rem;
+  margin: 2rem 0 0 auto;
+  padding: 1rem 1.1rem;
+  border-left: 4px solid var(--violet);
+  background: rgba(255, 255, 255, 0.75);
+  line-height: 1.45;
+}
+.intake-account-note a { font-weight: 850; text-underline-offset: 0.25rem; }
+.intake-account-note--dark { color: var(--ink); border-left-color: var(--acid); }
+.intake-page { max-width: 72rem; margin: 0 auto; padding: clamp(3rem, 7vw, 7rem) clamp(1rem, 3vw, 3rem); }
+.intake-form {
+  display: grid;
+  gap: 1.7rem;
+  padding: clamp(1.3rem, 4vw, 3rem);
+  border: 1px solid var(--ink);
+  background: white;
+  box-shadow: 8px 8px 0 var(--ink);
+}
+.intake-two-column { display: grid; grid-template-columns: 1fr 1fr; gap: 1.4rem; }
+.intake-field { display: grid; gap: 0.45rem; }
+.intake-label, .intake-choices legend { font-weight: 850; }
+.intake-help { color: rgba(25, 23, 24, 0.68); font-size: 0.86rem; }
+.intake-form input,
+.intake-form textarea,
+.intake-form select {
+  width: 100%;
+  padding: 0.82rem 0.9rem;
+  border: 1px solid rgba(25, 23, 24, 0.55);
+  border-radius: 0;
+  background: white;
+  color: var(--ink);
+  font: inherit;
+}
+.intake-form textarea { resize: vertical; }
+.intake-form input:focus,
+.intake-form textarea:focus,
+.intake-form select:focus { outline: 3px solid rgba(96, 68, 245, 0.25); border-color: var(--violet); }
+.intake-choices { display: grid; gap: 0.65rem; margin: 0; padding: 0; border: 0; }
+.intake-choice,
+.intake-consent { display: flex; align-items: flex-start; gap: 0.7rem; padding: 0.85rem 1rem; border: 1px solid var(--line); background: var(--paper); }
+.intake-choice input,
+.intake-consent input { width: auto; margin-top: 0.25rem; }
+.intake-private-documents { padding: 1.3rem; border: 1px dashed var(--ink); background: #eef2d8; }
+.intake-private-documents h2 { margin-top: 0; }
+.intake-placement { display: grid; gap: 1.2rem; padding: 1.3rem; border: 1px solid var(--ink); background: #eeeaff; }
+.intake-placement h2, .intake-placement > p { margin: 0; }
+.intake-placement > p { max-width: 52rem; line-height: 1.55; }
+.turnstile-shell { display: grid; gap: 0.5rem; padding: 1rem; background: var(--paper); }
+.turnstile-shell p,
+.intake-fine-print { margin: 0; color: rgba(25, 23, 24, 0.68); font-size: 0.84rem; }
+.intake-submit { padding: 1rem 1.25rem; border: 1px solid var(--ink); background: var(--ink); color: white; font: inherit; font-weight: 850; cursor: pointer; }
+.intake-submit:hover, .intake-submit:focus-visible { color: var(--ink); background: var(--acid); }
+.intake-submit:disabled { cursor: not-allowed; opacity: 0.55; }
+.intake-status { min-height: 1.5rem; font-weight: 800; }
+.intake-status[data-state="error"] { color: #9f321d; }
+.intake-status[data-state="success"] { padding: 1rem; background: #e6f4ca; color: #254621; }
+.intake-noscript { padding: 1rem; background: #fff1e9; color: #7c2f18; }
 
 .not-found { min-height: calc(100svh - 72px); padding: clamp(4rem, 10vw, 9rem) clamp(1rem, 3vw, 3rem); background: #c7baff; }
 .not-found h1 { margin: 4rem 0; }
@@ -294,6 +356,7 @@ h1 em { color: var(--violet); font-family: Georgia, serif; font-weight: 400; }
   .join-grid { grid-template-columns: 1fr; }
   .join-panel { min-height: 28rem; border-right: 0; border-bottom: 1px solid var(--ink); }
   .join-panel:last-child { border-bottom: 0; }
+  .intake-two-column { grid-template-columns: 1fr; }
 }
 
 @media (max-width: 520px) {

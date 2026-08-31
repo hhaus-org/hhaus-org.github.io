@@ -1,0 +1,21 @@
+---
+import PreInterestForm from '../../components/PreInterestForm.astro';
+import PublicIntakeScripts from '../../components/PublicIntakeScripts.astro';
+import SiteLayout from '../../layouts/SiteLayout.astro';
+---
+
+<SiteLayout
+  title="Pre-register — H/HAUS"
+  description="Pre-register for H/HAUS Medellín with your LinkedIn profile, venture proposal, and preferred residency length."
+>
+  <section class="page-hero page-hero--acid intake-hero">
+    <p class="kicker">Pre-register · H/HAUS Medellín</p>
+    <h1>Bring the idea<br /><em>you cannot leave alone.</em></h1>
+    <p class="page-lede">A lightweight first step for founders considering a three- or six-month residency in Medellín.</p>
+    <p class="intake-account-note">Already have an H/HAUS session? <a href="https://user.hhaus.org/submit-pre-interest">Use the prefilled signed-in form</a>.</p>
+  </section>
+  <section class="intake-page" aria-label="Pre-registration form">
+    <PreInterestForm />
+  </section>
+  <PublicIntakeScripts />
+</SiteLayout>

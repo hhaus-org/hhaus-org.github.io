@@ -1,0 +1,69 @@
+---
+const apiOrigin = import.meta.env.PUBLIC_HHAUS_API_ORIGIN ?? 'https://api.hhaus.org';
+const turnstileSiteKey = import.meta.env.PUBLIC_HHAUS_TURNSTILE_SITE_KEY ?? '';
+---
+
+<form
+  id="intake-form"
+  class="intake-form"
+  data-intake-form="pre-interest"
+  data-api-origin={apiOrigin}
+  data-turnstile-site-key={turnstileSiteKey}
+  novalidate
+>
+  <input type="hidden" name="submission_nonce" />
+
+  <label class="intake-field">
+    <span class="intake-label">Email</span>
+    <span class="intake-help">We will use this for application updates.</span>
+    <input type="email" name="email" autocomplete="email" maxlength="320" required />
+  </label>
+
+  <label class="intake-field">
+    <span class="intake-label">LinkedIn profile</span>
+    <span class="intake-help">Use your personal /in/ profile URL.</span>
+    <input
+      type="url"
+      name="linkedin_url"
+      autocomplete="url"
+      placeholder="https://www.linkedin.com/in/your-name"
+      required
+    />
+  </label>
+
+  <label class="intake-field">
+    <span class="intake-label">Entrepreneurship idea</span>
+    <span class="intake-help">Describe the customer, problem, and what you hope to build. 40–4,000 characters.</span>
+    <textarea name="entrepreneurship_idea" minlength="40" maxlength="4000" rows="8" required></textarea>
+  </label>
+
+  <fieldset class="intake-choices">
+    <legend>Preferred stay</legend>
+    <label class="intake-choice">
+      <input type="radio" name="stay_preference" value="three_months" checked />
+      <span><strong>3 months</strong> · Focused build sprint</span>
+    </label>
+    <label class="intake-choice">
+      <input type="radio" name="stay_preference" value="six_months" />
+      <span><strong>6 months</strong> · Longer residency and community arc</span>
+    </label>
+  </fieldset>
+
+  <label class="intake-consent">
+    <input type="checkbox" name="privacy_accepted" required />
+    <span>
+      I consent to the HHaus intake privacy notice (version 2026-08-31) and dual storage in the HHaus PostgreSQL and Supabase systems.
+    </span>
+  </label>
+
+  <div class="turnstile-shell">
+    <div id="turnstile-widget" aria-label="Anti-automation verification"></div>
+    <p>Anonymous submissions use Cloudflare Turnstile. The proof is verified by HHaus and is never stored.</p>
+  </div>
+
+  <button class="intake-submit" type="submit">Submit pre-interest</button>
+  <div id="intake-status" class="intake-status" role="status" aria-live="polite"></div>
+  <noscript>
+    <p class="intake-noscript">JavaScript is required for the public form. You can instead <a href="https://user.hhaus.org/submit-pre-interest">sign in and use the server form</a>.</p>
+  </noscript>
+</form>
