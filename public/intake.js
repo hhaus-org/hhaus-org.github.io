@@ -1,6 +1,6 @@
 const MAX_FILE_BYTES = 10 * 1024 * 1024;
 const MAX_RESPONSE_BYTES = 256 * 1024;
-const PRIVACY_NOTICE_VERSION = '2026-08-30';
+const PRIVACY_NOTICE_VERSION = '2026-08-31';
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/;
 
 class IntakeError extends Error {
@@ -82,6 +82,12 @@ async function submitApplication(activeForm, apiOrigin, supabaseOrigin, proofs) 
   const githubUrl = optionalString(data, 'github_url');
   const portfolioUrl = optionalString(data, 'portfolio_url');
   const accommodationNotes = optionalString(data, 'accessibility_or_accommodation_notes');
+  const allergyNotes = optionalString(data, 'allergy_notes');
+  const roomPreferenceNotes = optionalString(data, 'room_preference_notes');
+  const preferredRoomOccupancy = Number(requiredString(data, 'preferred_room_occupancy'));
+  if (!Number.isInteger(preferredRoomOccupancy) || preferredRoomOccupancy < 1 || preferredRoomOccupancy > 3) {
+    throw new IntakeError('Preferred room occupancy must be between one and three.');
+  }
   return apiPost(apiOrigin, '/v1/applications', `public-application:${nonce}:submit`, {
     email: requiredString(data, 'email'),
     linkedinUrl: requiredString(data, 'linkedin_url'),
@@ -98,9 +104,18 @@ async function submitApplication(activeForm, apiOrigin, supabaseOrigin, proofs) 
     preferredStartMonth: `${requiredString(data, 'preferred_start_month')}-01`,
     communityContribution: requiredString(data, 'community_contribution'),
     ...(accommodationNotes ? { accessibilityOrAccommodationNotes: accommodationNotes } : {}),
+    ...(allergyNotes ? { allergyNotes } : {}),
+    noiseSensitivity: requiredString(data, 'noise_sensitivity'),
+    lightSensitivity: requiredString(data, 'light_sensitivity'),
+    ...(roomPreferenceNotes ? { roomPreferenceNotes } : {}),
+    roommatePreference: requiredString(data, 'roommate_preference'),
+    preferredRoomOccupancy,
+    roommateForLowerCost: data.get('roommate_for_lower_cost') === 'on',
+    roommateForSocialConnection: data.get('roommate_for_social_connection') === 'on',
+    accommodationDataConsent: requiredCheckbox(data, 'accommodation_data_consent'),
     resumeUploadId,
     photoIdUploadId,
-    ageAndIdentityAttestation: data.get('age_and_identity_attestation') === 'on',
+    ageAndIdentityAttestation: requiredCheckbox(data, 'age_and_identity_attestation'),
     privacyNoticeVersion: PRIVACY_NOTICE_VERSION,
     turnstileToken: await proofs.fresh(),
   });
@@ -290,6 +305,11 @@ function requiredFile(data, name) {
   const value = data.get(name);
   if (!(value instanceof File) || !value.name) throw new IntakeError(`Required file ${name} is missing.`);
   return value;
+}
+
+function requiredCheckbox(data, name) {
+  if (data.get(name) !== 'on') throw new IntakeError(`Required consent ${name} is missing.`);
+  return true;
 }
 
 function exactHttpsOrigin(value) {

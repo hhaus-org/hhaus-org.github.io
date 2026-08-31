@@ -321,6 +321,9 @@ h1 em { color: var(--violet); font-family: Georgia, serif; font-weight: 400; }
 .intake-consent input { width: auto; margin-top: 0.25rem; }
 .intake-private-documents { padding: 1.3rem; border: 1px dashed var(--ink); background: #eef2d8; }
 .intake-private-documents h2 { margin-top: 0; }
+.intake-placement { display: grid; gap: 1.2rem; padding: 1.3rem; border: 1px solid var(--ink); background: #eeeaff; }
+.intake-placement h2, .intake-placement > p { margin: 0; }
+.intake-placement > p { max-width: 52rem; line-height: 1.55; }
 .turnstile-shell { display: grid; gap: 0.5rem; padding: 1rem; background: var(--paper); }
 .turnstile-shell p,
 .intake-fine-print { margin: 0; color: rgba(25, 23, 24, 0.68); font-size: 0.84rem; }

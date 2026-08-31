@@ -57,6 +57,55 @@ const turnstileSiteKey = import.meta.env.PUBLIC_HHAUS_TURNSTILE_SITE_KEY ?? '';
   <label class="intake-field"><span class="intake-label">Community contribution</span><span class="intake-help">How will you contribute to the house, other founders, and Medellín? 40–4,000 characters.</span><textarea name="community_contribution" minlength="40" maxlength="4000" rows="7" required></textarea></label>
   <label class="intake-field"><span class="intake-label">Accessibility or accommodation notes</span><span class="intake-help">Optional. Share only what you want our review team to consider.</span><textarea name="accessibility_or_accommodation_notes" maxlength="4000" rows="4"></textarea></label>
 
+  <section class="intake-placement" aria-labelledby="room-placement-heading">
+    <h2 id="room-placement-heading">Room placement and living preferences</h2>
+    <p>These answers are used only for accommodation and room placement—not admission scoring. You may choose “Prefer not to say” for sensory questions.</p>
+    <label class="intake-field"><span class="intake-label">Potential allergies</span><span class="intake-help">Optional. Share food, material, pet, or environmental allergies that may affect a shared living space.</span><textarea name="allergy_notes" maxlength="2000" rows="4"></textarea></label>
+    <div class="intake-two-column">
+      <label class="intake-field">
+        <span class="intake-label">Noise sensitivity</span><span class="intake-help">Choose the closest fit.</span>
+        <select name="noise_sensitivity" required>
+          <option value="none">None</option>
+          <option value="low">Low</option>
+          <option value="moderate">Moderate</option>
+          <option value="high">High</option>
+          <option value="prefer_not_to_say">Prefer not to say</option>
+        </select>
+      </label>
+      <label class="intake-field">
+        <span class="intake-label">Light sensitivity</span><span class="intake-help">Choose the closest fit.</span>
+        <select name="light_sensitivity" required>
+          <option value="none">None</option>
+          <option value="low">Low</option>
+          <option value="moderate">Moderate</option>
+          <option value="high">High</option>
+          <option value="prefer_not_to_say">Prefer not to say</option>
+        </select>
+      </label>
+      <label class="intake-field">
+        <span class="intake-label">Room-sharing preference</span><span class="intake-help">Some HHaus rooms have two or three beds.</span>
+        <select name="roommate_preference" required>
+          <option value="private_room">Private room</option>
+          <option value="open_to_roommates">Open to roommates</option>
+          <option value="prefer_roommates">Prefer roommates</option>
+          <option value="flexible">Flexible / no strong preference</option>
+        </select>
+      </label>
+      <label class="intake-field">
+        <span class="intake-label">Preferred room occupancy</span><span class="intake-help">Total residents in the room, including you.</span>
+        <select name="preferred_room_occupancy" required>
+          <option value="1">1 person / private room</option>
+          <option value="2">2 people / one roommate</option>
+          <option value="3">3 people / two roommates</option>
+        </select>
+      </label>
+    </div>
+    <label class="intake-field"><span class="intake-label">Other room preferences</span><span class="intake-help">Optional. Tell us about room location, natural light, stairs, layout, schedule, or other placement considerations.</span><textarea name="room_preference_notes" maxlength="2000" rows="4"></textarea></label>
+    <label class="intake-consent"><input type="checkbox" name="roommate_for_lower_cost" /><span>I am interested in roommates for a lower-cost stay.</span></label>
+    <label class="intake-consent"><input type="checkbox" name="roommate_for_social_connection" /><span>I am interested in roommates for more social connection.</span></label>
+    <label class="intake-consent"><input type="checkbox" name="accommodation_data_consent" required /><span>I consent to HHaus using these allergy, sensory, accommodation, and room-preference answers only for accommodation and placement planning.</span></label>
+  </section>
+
   <section class="intake-private-documents" aria-labelledby="private-documents-heading">
     <h2 id="private-documents-heading">Private documents</h2>
     <div class="intake-two-column">
@@ -66,7 +115,7 @@ const turnstileSiteKey = import.meta.env.PUBLIC_HHAUS_TURNSTILE_SITE_KEY ?? '';
   </section>
 
   <label class="intake-consent"><input type="checkbox" name="age_and_identity_attestation" required /><span>I attest that I am at least 18 and the identity document belongs to me.</span></label>
-  <label class="intake-consent"><input type="checkbox" name="privacy_accepted" required /><span>I consent to the HHaus intake privacy notice (version 2026-08-30), private document review, and dual database storage.</span></label>
+  <label class="intake-consent"><input type="checkbox" name="privacy_accepted" required /><span>I consent to the HHaus intake privacy notice (version 2026-08-31), private document review, and dual database storage.</span></label>
 
   <div class="turnstile-shell">
     <div id="turnstile-widget" aria-label="Anti-automation verification"></div>

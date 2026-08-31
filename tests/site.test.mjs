@@ -105,11 +105,28 @@ test('public intake captures the contract and hands signed-in users to their ser
     }
     assert.match(html, /https:\/\/user\.hhaus\.org\/submit-pre-interest/);
   }
-  for (const field of ['linkedin_url', 'date_of_birth', 'resume', 'photo_id', 'age_and_identity_attestation']) {
+  for (const field of [
+    'linkedin_url',
+    'date_of_birth',
+    'allergy_notes',
+    'noise_sensitivity',
+    'light_sensitivity',
+    'room_preference_notes',
+    'roommate_preference',
+    'preferred_room_occupancy',
+    'roommate_for_lower_cost',
+    'roommate_for_social_connection',
+    'accommodation_data_consent',
+    'resume',
+    'photo_id',
+    'age_and_identity_attestation',
+  ]) {
     assert.match(application, new RegExp(`name="${field}"`));
   }
   assert.match(application, /https:\/\/user\.hhaus\.org\/submit-application/);
   assert.match(application, /Used only for age and identity verification/);
+  assert.match(application, /3 people \/ two roommates/);
+  assert.match(application, /not admission scoring/);
 });
 
 test('public intake client preserves the fail-closed dual-storage and upload boundary', () => {
@@ -124,6 +141,10 @@ test('public intake client preserves the fail-closed dual-storage and upload bou
   assert.match(client, /\/v1\/intake\/uploads/);
   assert.match(client, /completed\.status !== 'verified'/);
   assert.match(client, /credentials: 'omit'/);
+  assert.match(client, /preferredRoomOccupancy/);
+  assert.match(client, /roommateForLowerCost/);
+  assert.match(client, /roommateForSocialConnection/);
+  assert.match(client, /accommodationDataConsent/);
   assert.doesNotMatch(client, /localStorage|sessionStorage|document\.cookie/);
   for (const marker of ['SERVICE_ROLE', 'SECRET_KEY', 'AUTH_SERVICE_CREDENTIAL']) {
     assert.equal(client.includes(marker), false);
