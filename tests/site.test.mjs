@@ -132,6 +132,8 @@ test('public intake captures the contract and hands signed-in users to their ser
 test('public intake client preserves the fail-closed dual-storage and upload boundary', () => {
   const client = read('public/intake.js');
   const scripts = read('src/components/PublicIntakeScripts.astro');
+  const preInterestForm = read('src/components/PreInterestForm.astro');
+  const applicationForm = read('src/components/ApplicationForm.astro');
   assert.match(scripts, /api\.js\?render=explicit/);
   assert.match(client, /execution: 'execute'/);
   assert.match(client, /turnstile\.reset\(widgetId\)/);
@@ -145,6 +147,11 @@ test('public intake client preserves the fail-closed dual-storage and upload bou
   assert.match(client, /roommateForLowerCost/);
   assert.match(client, /roommateForSocialConnection/);
   assert.match(client, /accommodationDataConsent/);
+  assert.match(client, /applyClientValidationBounds\(activeForm\)/);
+  assert.match(client, /dateOfBirth\.max = adultCutoff\.toISOString\(\)\.slice\(0, 10\)/);
+  for (const formSource of [preInterestForm, applicationForm]) {
+    assert.match(formSource, /pattern="https:\/\/\(www\\\.\)\?linkedin\\\.\(com\|cn\)\/in\/\.\+"/);
+  }
   assert.doesNotMatch(client, /localStorage|sessionStorage|document\.cookie/);
   for (const marker of ['SERVICE_ROLE', 'SECRET_KEY', 'AUTH_SERVICE_CREDENTIAL']) {
     assert.equal(client.includes(marker), false);

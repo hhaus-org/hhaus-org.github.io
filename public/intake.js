@@ -22,6 +22,7 @@ async function initialize(activeForm) {
   const apiOrigin = exactHttpsOrigin(activeForm.dataset.apiOrigin);
   const supabaseOrigin = exactHttpsOrigin(activeForm.dataset.supabaseOrigin ?? 'https://bihpugkzayenywfyajnr.supabase.co');
   const siteKey = activeForm.dataset.turnstileSiteKey?.trim() ?? '';
+  applyClientValidationBounds(activeForm);
   if (!siteKey || siteKey.length > 256 || !/^[A-Za-z0-9_-]+$/.test(siteKey)) {
     throw new IntakeError('Public anti-automation verification is not configured.');
   }
@@ -50,6 +51,18 @@ async function initialize(activeForm) {
       disableSubmit(false);
     }
   });
+}
+
+function applyClientValidationBounds(activeForm) {
+  const dateOfBirth = activeForm.elements.namedItem('date_of_birth');
+  if (!(dateOfBirth instanceof HTMLInputElement)) return;
+  const today = new Date();
+  const adultCutoff = new Date(Date.UTC(
+    today.getUTCFullYear() - 18,
+    today.getUTCMonth(),
+    today.getUTCDate(),
+  ));
+  dateOfBirth.max = adultCutoff.toISOString().slice(0, 10);
 }
 
 async function submitPreInterest(activeForm, apiOrigin, proofs) {
