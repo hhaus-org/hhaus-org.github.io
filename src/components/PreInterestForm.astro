@@ -27,6 +27,8 @@ const turnstileSiteKey = import.meta.env.PUBLIC_HHAUS_TURNSTILE_SITE_KEY ?? '';
       name="linkedin_url"
       autocomplete="url"
       placeholder="https://www.linkedin.com/in/your-name"
+      pattern="https://(www\.)?linkedin\.(com|cn)/in/.+"
+      title="Use a personal LinkedIn profile URL beginning with https://www.linkedin.com/in/."
       required
     />
   </label>
