@@ -24,19 +24,50 @@ test('bootstrap installs Opto Sync before the existing intake client', () => {
   );
 });
 
-test('native intake fetches are queued before transport and require dual-storage receipts', () => {
+test('native intake fetches are durably queued before transport', () => {
   const source = read('public/intake-opto-sync.js');
+  const snapshotAt = source.indexOf('const superseded = await supersededPending');
   const queueAt = source.indexOf('queued = await queueFormPayload');
-  const fetchAt = source.indexOf('response = await originalFetch', queueAt);
-  assert.ok(queueAt >= 0 && fetchAt > queueAt, 'the durable queue must precede transport');
+  const cleanupAt = source.indexOf('await deleteSupersededPending', queueAt);
+  const fetchAt = source.indexOf('response = await originalFetch', cleanupAt);
+
+  assert.ok(snapshotAt >= 0, 'older durable copies must be inspected');
+  assert.ok(queueAt > snapshotAt, 'the replacement must be written after inspecting older copies');
+  assert.ok(
+    cleanupAt > queueAt,
+    'older copies must never be deleted until the replacement has committed',
+  );
+  assert.ok(fetchAt > cleanupAt, 'durable replacement and cleanup must precede transport');
+  assert.doesNotMatch(
+    source.slice(snapshotAt, queueAt),
+    /deleteMutation/,
+    'the last durable copy must not be deleted before replacement',
+  );
   assert.match(source, /form_submissions\/hhaus\/pre-interest/);
   assert.match(source, /form_submissions\/hhaus\/application/);
-  assert.match(source, /receipt\.primaryPersistence === 'stored'/);
-  assert.match(source, /receipt\.supabasePersistence === 'stored'/);
-  assert.match(source, /invalidDualStorageReceipt|invalid_dual_storage_receipt/);
-  assert.match(source, /deleteMutation\(queued\.queueId\)/);
   assert.match(source, /Ambiguous\/network failures remain pending/);
   assert.doesNotMatch(source, /localStorage|sessionStorage|document\.cookie/);
+});
+
+test('canonical receipt is bound to the exact queued submission and both stores', () => {
+  const source = read('public/intake-opto-sync.js');
+  assert.match(source, /receipt\.submissionId === expectedSubmissionId/);
+  assert.match(source, /UUID_PATTERN\.test\(receipt\.submissionId\)/);
+  assert.match(source, /receipt\.kind === expectedKind/);
+  assert.match(source, /receipt\.primaryPersistence === 'stored'/);
+  assert.match(source, /receipt\.supabasePersistence === 'stored'/);
+  assert.match(source, /typeof receipt\.acceptedAt === 'string'/);
+  assert.match(source, /invalidDualStorageReceipt|invalid_dual_storage_receipt/);
+  assert.match(source, /deleteMutation\(queued\.queueId\)/);
+});
+
+test('request and response limits count UTF-8 bytes and bound streamed responses', () => {
+  const source = read('public/intake-opto-sync.js');
+  assert.match(source, /utf8ByteLength\(bodyText\) > MAX_INSPECTION_BYTES/);
+  assert.match(source, /new TextEncoder\(\)\.encode\(value\)\.byteLength/);
+  assert.match(source, /response\.body\.getReader\(\)/);
+  assert.match(source, /total > maximumBytes/);
+  assert.match(source, /new TextDecoder\('utf-8', \{ fatal: true \}\)/);
 });
 
 test('queued copies redact transport credentials and never include file bytes', async () => {
@@ -51,6 +82,22 @@ test('queued copies redact transport credentials and never include file bytes', 
     email: 'resident@example.test',
     nested: { city: 'Medellin' },
   });
+});
+
+test('sanitizer rejects non-JSON and prototype-shaped values', async () => {
+  const { sanitizeFormPayload } = await import('../public/vendor/opto-sync-forms/index.js');
+  assert.throws(
+    () => sanitizeFormPayload({ amount: Number.POSITIVE_INFINITY }),
+    /finite/,
+  );
+  assert.throws(
+    () => sanitizeFormPayload({ amount: 1n }),
+    /BigInt/,
+  );
+
+  const source = JSON.parse('{"safe":"value","__proto__":{"polluted":true}}');
+  assert.deepEqual(sanitizeFormPayload(source), { safe: 'value' });
+  assert.equal({}.polluted, undefined);
 });
 
 test('Astro public assets include the complete pinned connector module graph', () => {
