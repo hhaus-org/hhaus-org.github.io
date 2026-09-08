@@ -38,7 +38,14 @@ function installOptoSyncFetchConnector(form) {
 
     let queued;
     try {
-      await removeSupersededPending(queue, context.route.tableName, context.submissionId);
+      // Read older copies first, but never delete the last durable copy before the
+      // replacement has committed. If the queue is full or the new write fails,
+      // the prior payload remains available for recovery.
+      const superseded = await supersededPending(
+        queue,
+        context.route.tableName,
+        context.submissionId,
+      );
       queued = await queueFormPayload(queue, {
         formName: context.route.formName,
         tableName: context.route.tableName,
@@ -48,6 +55,8 @@ function installOptoSyncFetchConnector(form) {
         method: 'POST',
         payload: context.body,
       });
+      await deleteSupersededPending(queue, superseded, queued.queueId);
+      await publishPendingCount(form, queue);
     } catch {
       throw new TypeError('The H/HAUS form could not be durably queued before transmission.');
     }
@@ -62,10 +71,15 @@ function installOptoSyncFetchConnector(form) {
 
     const inspection = await inspectResponse(response);
     if (response.ok) {
-      if (!validDualStorageReceipt(inspection.body, context.route.receiptKind)) {
+      if (!validDualStorageReceipt(
+        inspection.body,
+        context.route.receiptKind,
+        context.submissionId,
+      )) {
         return invalidReceiptResponse();
       }
       await queue.deleteMutation(queued.queueId).catch(() => undefined);
+      await publishPendingCount(form, queue).catch(() => undefined);
       return response;
     }
 
@@ -74,18 +88,13 @@ function installOptoSyncFetchConnector(form) {
       : response.status >= 500 || [408, 425, 429].includes(response.status);
     if (!retryable) {
       await queue.deleteMutation(queued.queueId).catch(() => undefined);
+      await publishPendingCount(form, queue).catch(() => undefined);
     }
     return response;
   };
 
   form.dataset.optoSync = FORM_SCHEMA_VERSION;
-  queue.pendingMutations().then((pending) => {
-    form.dataset.optoPendingCount = String(pending.length);
-    form.dispatchEvent(new CustomEvent('opto-sync:pending-forms', {
-      bubbles: true,
-      detail: { count: pending.length },
-    }));
-  }).catch(() => {
+  publishPendingCount(form, queue).catch(() => {
     form.dataset.optoPendingCount = 'unavailable';
   });
 }
@@ -117,7 +126,7 @@ async function intakeRequestContext(input, init, apiOrigin) {
   if (!keyMatch || !UUID_PATTERN.test(keyMatch[1])) return null;
 
   const bodyText = await requestBodyText(request, init);
-  if (bodyText.length > MAX_INSPECTION_BYTES) {
+  if (utf8ByteLength(bodyText) > MAX_INSPECTION_BYTES) {
     throw new TypeError('The H/HAUS form payload is too large to queue safely.');
   }
   let body;
@@ -140,13 +149,30 @@ async function requestBodyText(request, init) {
   throw new TypeError('The H/HAUS form request body cannot be queued safely.');
 }
 
-async function removeSupersededPending(queue, tableName, submissionId) {
+async function supersededPending(queue, tableName, submissionId) {
   const pending = await queue.pendingMutations(tableName);
-  for (const mutation of pending) {
-    if (mutation.recordId === submissionId && Number.isSafeInteger(mutation.id)) {
+  return pending.filter((mutation) => (
+    mutation.recordId === submissionId
+    && Number.isSafeInteger(mutation.id)
+    && mutation.id > 0
+  ));
+}
+
+async function deleteSupersededPending(queue, superseded, currentQueueId) {
+  for (const mutation of superseded) {
+    if (mutation.id !== currentQueueId) {
       await queue.deleteMutation(mutation.id);
     }
   }
+}
+
+async function publishPendingCount(form, queue) {
+  const pending = await queue.pendingMutations();
+  form.dataset.optoPendingCount = String(pending.length);
+  form.dispatchEvent(new CustomEvent('opto-sync:pending-forms', {
+    bubbles: true,
+    detail: { count: pending.length },
+  }));
 }
 
 async function inspectResponse(response) {
@@ -156,15 +182,20 @@ async function inspectResponse(response) {
   } catch {
     return { body: null };
   }
-  const advertised = Number(clone.headers.get('content-length') ?? 0);
-  if (advertised > MAX_INSPECTION_BYTES) return { body: null };
+
+  const advertisedText = clone.headers.get('content-length');
+  const advertised = advertisedText === null ? null : Number(advertisedText);
+  if (advertised !== null && Number.isFinite(advertised) && advertised > MAX_INSPECTION_BYTES) {
+    return { body: null };
+  }
+
   let text;
   try {
-    text = await clone.text();
+    text = await boundedResponseText(clone, MAX_INSPECTION_BYTES);
   } catch {
     return { body: null };
   }
-  if (text.length > MAX_INSPECTION_BYTES) return { body: null };
+  if (text === null) return { body: null };
   try {
     return { body: JSON.parse(text) };
   } catch {
@@ -172,14 +203,53 @@ async function inspectResponse(response) {
   }
 }
 
-function validDualStorageReceipt(receipt, expectedKind) {
+async function boundedResponseText(response, maximumBytes) {
+  if (!response.body?.getReader) {
+    const text = await response.text();
+    return utf8ByteLength(text) <= maximumBytes ? text : null;
+  }
+
+  const reader = response.body.getReader();
+  const chunks = [];
+  let total = 0;
+  try {
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      total += value.byteLength;
+      if (total > maximumBytes) {
+        await reader.cancel().catch(() => undefined);
+        return null;
+      }
+      chunks.push(value);
+    }
+  } finally {
+    reader.releaseLock();
+  }
+
+  const bytes = new Uint8Array(total);
+  let offset = 0;
+  for (const chunk of chunks) {
+    bytes.set(chunk, offset);
+    offset += chunk.byteLength;
+  }
+  return new TextDecoder('utf-8', { fatal: true }).decode(bytes);
+}
+
+function utf8ByteLength(value) {
+  return new TextEncoder().encode(value).byteLength;
+}
+
+function validDualStorageReceipt(receipt, expectedKind, expectedSubmissionId) {
   return Boolean(
     receipt
-    && UUID_PATTERN.test(receipt.submissionId ?? '')
+    && receipt.submissionId === expectedSubmissionId
+    && UUID_PATTERN.test(receipt.submissionId)
     && receipt.kind === expectedKind
     && receipt.primaryPersistence === 'stored'
     && receipt.supabasePersistence === 'stored'
-    && !Number.isNaN(Date.parse(receipt.acceptedAt ?? ''))
+    && typeof receipt.acceptedAt === 'string'
+    && !Number.isNaN(Date.parse(receipt.acceptedAt))
   );
 }
 
