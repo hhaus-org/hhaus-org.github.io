@@ -1,10 +1,20 @@
 import assert from 'node:assert/strict';
+import { createHash } from 'node:crypto';
 import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import test from 'node:test';
 
 const root = new URL('..', import.meta.url).pathname;
 const read = (relativePath) => readFileSync(join(root, relativePath), 'utf8');
+const readBytes = (relativePath) => readFileSync(join(root, relativePath));
+const vendor = 'public/vendor/opto-sync-forms';
+
+function gitBlobSha(bytes) {
+  return createHash('sha1')
+    .update(Buffer.from(`blob ${bytes.length}\0`))
+    .update(bytes)
+    .digest('hex');
+}
 
 test('vendored Opto Sync form connector exposes native and HTMX entry points', async () => {
   const connector = await import('../public/vendor/opto-sync-forms/index.js');
@@ -14,6 +24,22 @@ test('vendored Opto Sync form connector exposes native and HTMX entry points', a
   assert.equal(typeof connector.bindNativeForm, 'function');
   assert.equal(typeof connector.bindHtmxForm, 'function');
   assert.equal(typeof connector.BrowserFormQueue.prototype.deleteMutation, 'function');
+});
+
+test('vendored module bytes match the documented merged upstream revision', () => {
+  const upstream = read(`${vendor}/UPSTREAM.md`);
+  assert.match(upstream, /2c2718ac9cfd236e10d73968d3ddada748900f4f/);
+  const expected = {
+    'types.js': 'a8d53d9c06e6f8f17c6fa5c03926a80eceef8055',
+    'sanitize.js': '538e34ed9695da640a5590e831bc644f867f1843',
+    'browser-queue.js': '95d7c1d3f8fe91f332ff0db394da4f352419f7f2',
+    'connectors.js': 'f28ed44c96d659b7532857ab0d81180d46cc6978',
+    'index.js': '603f1ac2f3cd5c860cf0d368d438a9cfe78c0bb9',
+  };
+  for (const [file, sha] of Object.entries(expected)) {
+    assert.equal(gitBlobSha(readBytes(`${vendor}/${file}`)), sha, file);
+    assert.ok(upstream.includes(`\`${file}\`: \`${sha}\``), `${file} provenance`);
+  }
 });
 
 test('bootstrap installs Opto Sync before the existing intake client', () => {
@@ -95,7 +121,7 @@ test('sanitizer rejects non-JSON and prototype-shaped values', async () => {
     /BigInt/,
   );
 
-  const source = JSON.parse('{"safe":"value","__proto__":{"polluted":true}}');
+  const source = JSON.parse('{"safe":"value","__proto__":{"polluted":true},"constructor":{"prototype":{"polluted":true}}}');
   assert.deepEqual(sanitizeFormPayload(source), { safe: 'value' });
   assert.equal({}.polluted, undefined);
 });
@@ -110,6 +136,6 @@ test('Astro public assets include the complete pinned connector module graph', (
     'LICENSE',
     'UPSTREAM.md',
   ]) {
-    assert.ok(existsSync(join(root, 'public/vendor/opto-sync-forms', file)), file);
+    assert.ok(existsSync(join(root, vendor, file)), file);
   }
 });
