@@ -1,0 +1,21 @@
+---
+import ApplicationForm from '../../../components/ApplicationForm.astro';
+import PublicIntakeScripts from '../../../components/PublicIntakeScripts.astro';
+import SiteLayout from '../../../layouts/SiteLayout.astro';
+---
+
+<SiteLayout
+  title="Founder intake — H/HAUS"
+  description="Apply to live and build at H/HAUS. Tell us what you are building, who it is for, the market you see, and how co-living can accelerate the work."
+>
+  <section class="page-hero page-hero--violet intake-hero">
+    <p class="kicker">Founder intake · H/HAUS</p>
+    <h1>Live together.<br /><em>Build faster.</em></h1>
+    <p class="page-lede">Tell us about your entrepreneurship idea, its audience and market, and the cross-pollination you hope to create with other residents.</p>
+    <p class="intake-account-note intake-account-note--dark">Already have an H/HAUS session? <a href="https://user.hhaus.org/forms/intake">Continue in the signed-in app</a>.</p>
+  </section>
+  <section class="intake-page" aria-label="Founder residency intake form">
+    <ApplicationForm />
+  </section>
+  <PublicIntakeScripts />
+</SiteLayout>
