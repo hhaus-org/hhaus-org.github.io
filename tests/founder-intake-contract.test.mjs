@@ -36,5 +36,5 @@ test('browser serializer sends all founder fields through the existing applicati
 test('/forms/intake is the stable public founder-intake entry point', () => {
   assert.match(intakeRoute, /ApplicationForm/);
   assert.match(intakeRoute, /PublicIntakeScripts/);
-  assert.match(intakeRoute, /https:\/\/user\.hhaus\.org\/forms\/intake/);
+  assert.match(intakeRoute, /https:\/\/user\.hhaus\.org\/submit-application/);
 });
