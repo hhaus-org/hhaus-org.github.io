@@ -28,11 +28,34 @@ const turnstileSiteKey = import.meta.env.PUBLIC_HHAUS_TURNSTILE_SITE_KEY ?? '';
     <label class="intake-field"><span class="intake-label">Portfolio URL</span><span class="intake-help">Optional.</span><input type="url" name="portfolio_url" placeholder="https://your-site.example" /></label>
   </div>
 
-  <label class="intake-field">
-    <span class="intake-label">Entrepreneurship idea</span>
-    <span class="intake-help">Explain the problem, customer, your approach, and what progress at HHaus would look like. 80–8,000 characters.</span>
-    <textarea name="entrepreneurship_idea" minlength="80" maxlength="8000" rows="10" required></textarea>
-  </label>
+  <section class="intake-placement" aria-labelledby="founder-idea-heading">
+    <h2 id="founder-idea-heading">Founder idea and market</h2>
+    <p>We want to understand what you are building, who it is for, and why a builder-focused co-living environment is useful to the work.</p>
+
+    <label class="intake-field">
+      <span class="intake-label">Entrepreneurship idea</span>
+      <span class="intake-help">Explain the problem, customer, your approach, and what progress at H/HAUS would look like. 80–8,000 characters.</span>
+      <textarea name="entrepreneurship_idea" minlength="80" maxlength="8000" rows="10" required></textarea>
+    </label>
+
+    <label class="intake-field">
+      <span class="intake-label">Target audience and buyer</span>
+      <span class="intake-help">Who has the problem, who uses the product, and who pays? Be specific about roles, industries, geographies, or communities. 40–4,000 characters.</span>
+      <textarea name="target_audience" minlength="40" maxlength="4000" rows="6" required></textarea>
+    </label>
+
+    <label class="intake-field">
+      <span class="intake-label">Total market size</span>
+      <span class="intake-help">Explain your estimate of the total addressable market and the assumptions behind it. Include currency, geography, customer count, spend, or another useful sizing method. 40–4,000 characters.</span>
+      <textarea name="total_market_size" minlength="40" maxlength="4000" rows="6" required></textarea>
+    </label>
+
+    <label class="intake-field">
+      <span class="intake-label">Why co-living helps this idea cross-pollinate</span>
+      <span class="intake-help">What expertise, feedback, introductions, collaborations, or day-to-day collisions would help your project—and what can other residents learn or receive from you? 60–4,000 characters.</span>
+      <textarea name="cross_pollination_value" minlength="60" maxlength="4000" rows="7" required></textarea>
+    </label>
+  </section>
 
   <div class="intake-two-column">
     <label class="intake-field">
@@ -83,7 +106,7 @@ const turnstileSiteKey = import.meta.env.PUBLIC_HHAUS_TURNSTILE_SITE_KEY ?? '';
         </select>
       </label>
       <label class="intake-field">
-        <span class="intake-label">Room-sharing preference</span><span class="intake-help">Some HHaus rooms have two or three beds.</span>
+        <span class="intake-label">Room-sharing preference</span><span class="intake-help">Some H/HAUS rooms have two or three beds.</span>
         <select name="roommate_preference" required>
           <option value="private_room">Private room</option>
           <option value="open_to_roommates">Open to roommates</option>
@@ -103,7 +126,7 @@ const turnstileSiteKey = import.meta.env.PUBLIC_HHAUS_TURNSTILE_SITE_KEY ?? '';
     <label class="intake-field"><span class="intake-label">Other room preferences</span><span class="intake-help">Optional. Tell us about room location, natural light, stairs, layout, schedule, or other placement considerations.</span><textarea name="room_preference_notes" maxlength="2000" rows="4"></textarea></label>
     <label class="intake-consent"><input type="checkbox" name="roommate_for_lower_cost" /><span>I am interested in roommates for a lower-cost stay.</span></label>
     <label class="intake-consent"><input type="checkbox" name="roommate_for_social_connection" /><span>I am interested in roommates for more social connection.</span></label>
-    <label class="intake-consent"><input type="checkbox" name="accommodation_data_consent" required /><span>I consent to HHaus using these allergy, sensory, accommodation, and room-preference answers only for accommodation and placement planning.</span></label>
+    <label class="intake-consent"><input type="checkbox" name="accommodation_data_consent" required /><span>I consent to H/HAUS using these allergy, sensory, accommodation, and room-preference answers only for accommodation and placement planning.</span></label>
   </section>
 
   <section class="intake-private-documents" aria-labelledby="private-documents-heading">
@@ -115,7 +138,7 @@ const turnstileSiteKey = import.meta.env.PUBLIC_HHAUS_TURNSTILE_SITE_KEY ?? '';
   </section>
 
   <label class="intake-consent"><input type="checkbox" name="age_and_identity_attestation" required /><span>I attest that I am at least 18 and the identity document belongs to me.</span></label>
-  <label class="intake-consent"><input type="checkbox" name="privacy_accepted" required /><span>I consent to the HHaus intake privacy notice (version 2026-08-31), private document review, and dual database storage.</span></label>
+  <label class="intake-consent"><input type="checkbox" name="privacy_accepted" required /><span>I consent to the H/HAUS intake privacy notice (version 2026-08-31), private document review, and dual database storage.</span></label>
 
   <div class="turnstile-shell">
     <div id="turnstile-widget" aria-label="Anti-automation verification"></div>
